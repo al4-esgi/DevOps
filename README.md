@@ -56,13 +56,7 @@ kubectl apply -f k3s/namespace.yaml
 kubectl apply -R -f k3s/
 ```
 
-### 4. Configurer les domaines locaux
-
-```bash
-echo "127.0.0.1  n8n.local dozzle.local" | sudo tee -a /etc/hosts
-```
-
-### 5. Vérifier que les pods tournent
+### 4. Vérifier que les pods tournent
 
 ```bash
 kubectl get pods -n devops
@@ -76,21 +70,53 @@ kubectl get pods -n devops
 
 ## Accès aux services
 
-| Service    | URL                          |
-|------------|------------------------------|
-| n8n        | http://n8n.local             |
-| Dozzle     | http://dozzle.local          |
+Les services ne sont pas exposés directement sur ton Mac. Il faut utiliser le port-forward pour y accéder via `localhost`.
+
+### Via Task (recommandé)
+
+```bash
+task forward
+```
+
+Lance les deux port-forwards en parallèle. `Ctrl+C` pour tout couper.
+
+### Manuellement
+
+```bash
+# n8n sur localhost:5678
+kubectl port-forward svc/n8n 5678:5678 -n devops
+
+# dozzle sur localhost:8080
+kubectl port-forward svc/dozzle 8080:8080 -n devops
+```
+
+> `svc/n8n` est la syntaxe `type/nom` de kubectl. `svc` est l'abréviation de `service`.
+> Ces deux commandes sont équivalentes :
+> ```bash
+> kubectl port-forward svc/n8n 5678:5678 -n devops
+> kubectl port-forward service/n8n 5678:5678 -n devops
+> ```
+
+| Service | URL |
+|---|---|
+| n8n | http://localhost:5678 |
+| Dozzle | http://localhost:8080 |
 
 ---
 
 ## Commandes utiles (via Task)
 
 ```bash
-task up        # Crée le cluster et déploie tout
-task down      # Supprime le cluster
-task restart   # Recrée le cluster et redéploie
-task status    # Affiche l'état des pods
-task logs      # Affiche les logs de tous les pods (via kubectl)
+task up            # Crée le cluster et déploie tout
+task down          # Supprime le cluster
+task restart       # Recrée le cluster et redéploie
+task status        # Affiche l'état des pods
+task logs          # Affiche les logs de tous les pods
+task forward       # Port-forward n8n (5678) et dozzle (8080)
+task forward:n8n   # Port-forward uniquement n8n
+task forward:dozzle # Port-forward uniquement dozzle
+task redeploy      # Réapplique les manifests sans recréer le cluster
+task restart:pods  # Redémarre tous les pods
 ```
 
 ---

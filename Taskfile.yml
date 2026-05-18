@@ -66,3 +66,24 @@ tasks:
       - kubectl rollout restart deployment/postgres -n {{.NAMESPACE}}
       - kubectl rollout restart deployment/n8n -n {{.NAMESPACE}}
       - kubectl rollout restart deployment/dozzle -n {{.NAMESPACE}}
+
+  forward:
+    desc: "Port-forward tous les services (n8n: 5678, dozzle: 8080)"
+    deps:
+      - forward:n8n
+      - forward:dozzle
+
+  forward:n8n:
+    desc: Port-forward n8n sur localhost:5678
+    cmds:
+      - kubectl port-forward svc/n8n 5678:5678 -n {{.NAMESPACE}}
+
+  forward:dozzle:
+    desc: Port-forward dozzle sur localhost:8080
+    cmds:
+      - kubectl port-forward svc/dozzle 8080:8080 -n {{.NAMESPACE}}
+
+  forward:postgres:
+    desc: Port-forward postgres sur localhost:5432
+    cmds:
+      - kubectl port-forward svc/postgres 5432:5432 -n {{.NAMESPACE}}
