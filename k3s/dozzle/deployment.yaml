@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dozzle
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dozzle
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: dozzle
+    spec:
+      serviceAccountName: dozzle-viewer
+      containers:
+        - name: dozzle
+          image: amir20/dozzle:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DOZZLE_MODE
+              value: "k8s"
+            - name: DOZZLE_ENABLE_ACTIONS
+              value: "true"
+            - name: DOZZLE_ENABLE_SHELL
+              value: "true"
+            # Pour restreindre à un namespace :
+            # - name: DOZZLE_NAMESPACE
+            #   value: "devops"
+          volumeMounts:
+            - name: dozzle-data
+              mountPath: /data
+      volumes:
+        - name: dozzle-data
+          persistentVolumeClaim:
+            claimName: dozzle-pvc

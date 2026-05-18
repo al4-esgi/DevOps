@@ -3,17 +3,66 @@
 version: "3"
 
 vars:
-  GREETING: Hello, World!
+  CLUSTER_NAME: devops
+  NAMESPACE: devops
 
 tasks:
   default:
-    desc: Print a greeting message
+    desc: Affiche les tâches disponibles
     cmds:
-      - echo "{{.GREETING}}"
+      - task --list
     silent: true
-  readme:
-    desc: Generate README.md
+
+  up:
+    desc: Crée le cluster k3d et déploie toute l'infrastructure
     cmds:
-      - echo "# Taskfile Example" > README.md
-      - echo "This is an example of a Taskfile." >> README.md
-      - echo "It demonstrates how to define tasks and variables." >> README.md
+      - task: cluster:create
+      - task: deploy
+
+  down:
+    desc: Supprime le cluster k3d
+    cmds:
+      - k3d cluster delete {{.CLUSTER_NAME}}
+
+  restart:
+    desc: Supprime et recrée le cluster, puis redéploie
+    cmds:
+      - task: down
+      - task: up
+
+  status:
+    desc: Affiche l'état des pods dans le namespace devops
+    cmds:
+      - kubectl get pods -n {{.NAMESPACE}}
+
+  logs:
+    desc: Affiche les logs de tous les pods du namespace devops
+    cmds:
+      - kubectl logs -n {{.NAMESPACE}} --selector='app in (n8n,postgres,dozzle)' --prefix=true --max-log-requests=10
+
+  cluster:create:
+    desc: Crée le cluster k3d avec les ports 80 et 443 exposés
+    cmds:
+      - k3d cluster create {{.CLUSTER_NAME}} --port "80:80@loadbalancer" --port "443:443@loadbalancer"
+      - kubectl wait --for=condition=Ready nodes --all --timeout=60s
+
+  deploy:
+    desc: Déploie les manifests Kubernetes
+    cmds:
+      - kubectl apply -f k3s/namespace.yaml
+      - kubectl apply -R -f k3s/
+      - kubectl rollout status deployment/postgres -n {{.NAMESPACE}}
+      - kubectl rollout status deployment/n8n -n {{.NAMESPACE}}
+      - kubectl rollout status deployment/dozzle -n {{.NAMESPACE}}
+
+  redeploy:
+    desc: Réapplique les manifests sans recréer le cluster
+    cmds:
+      - task: deploy
+
+  restart:pods:
+    desc: Redémarre tous les pods du namespace devops
+    cmds:
+      - kubectl rollout restart deployment/postgres -n {{.NAMESPACE}}
+      - kubectl rollout restart deployment/n8n -n {{.NAMESPACE}}
+      - kubectl rollout restart deployment/dozzle -n {{.NAMESPACE}}
