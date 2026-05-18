@@ -1,0 +1,28 @@
+name: Deploy to k3S server
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Deploy
+        run: |
+          kubectl apply -f k3s/namespace.yaml
+          kubectl apply -f k3s/caddy/namespace.yaml
+          kubectl apply -R -f k3s/
+          kubectl rollout status deployment/postgres -n {{.NAMESPACE}}
+          kubectl rollout status deployment/n8n -n {{.NAMESPACE}}
+          kubectl rollout status deployment/dozzle -n {{.NAMESPACE}}
