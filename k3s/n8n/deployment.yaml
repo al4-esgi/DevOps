@@ -41,11 +41,11 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
             - name: N8N_HOST
-              value: "n8n.local"
+              value: "n8n.devops.vlxx.fr"
             - name: WEBHOOK_URL
-              value: "http://n8n.local/"
+              value: "https://n8n.devops.vlxx.fr/"
             - name: N8N_SECURE_COOKIE
-              value: "false"
+              value: "true"
           volumeMounts:
             - name: n8n-data
               mountPath: /home/node/.n8n

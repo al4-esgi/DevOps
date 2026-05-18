@@ -5,6 +5,10 @@ metadata:
   namespace: infra
 data:
   Caddyfile: |
-    :80 {
-      respond "Hello World" 200
+    n8n.devops.vlxx.fr {
+      reverse_proxy n8n.devops.svc.cluster.local:5678
+    }
+
+    dozzle.devops.vlxx.fr {
+      reverse_proxy dozzle.devops.svc.cluster.local:8080
     }
