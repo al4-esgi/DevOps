@@ -14,10 +14,10 @@ tasks:
     silent: true
 
   up:
-    desc: Crée le cluster k3d et déploie toute l'infrastructure
+    desc: Crée le cluster k3d avec les ports 80 et 443 exposés
     cmds:
-      - task: cluster:create
-      - task: deploy
+      - k3d cluster create {{.CLUSTER_NAME}} --port "80:80@loadbalancer" --port "443:443@loadbalancer"
+      - kubectl wait --for=condition=Ready nodes --all --timeout=60s
 
   down:
     desc: Supprime le cluster k3d
@@ -40,25 +40,15 @@ tasks:
     cmds:
       - kubectl logs -n {{.NAMESPACE}} --selector='app in (n8n,postgres,dozzle)' --prefix=true --max-log-requests=10
 
-  cluster:create:
-    desc: Crée le cluster k3d avec les ports 80 et 443 exposés
-    cmds:
-      - k3d cluster create {{.CLUSTER_NAME}} --port "80:80@loadbalancer" --port "443:443@loadbalancer"
-      - kubectl wait --for=condition=Ready nodes --all --timeout=60s
-
-  deploy:
+  apply:
     desc: Déploie les manifests Kubernetes
     cmds:
       - kubectl apply -f k3s/namespace.yaml
+      - kubectl apply -f k3s/caddy/namespace.yaml
       - kubectl apply -R -f k3s/
       - kubectl rollout status deployment/postgres -n {{.NAMESPACE}}
       - kubectl rollout status deployment/n8n -n {{.NAMESPACE}}
       - kubectl rollout status deployment/dozzle -n {{.NAMESPACE}}
-
-  redeploy:
-    desc: Réapplique les manifests sans recréer le cluster
-    cmds:
-      - task: deploy
 
   restart:pods:
     desc: Redémarre tous les pods du namespace devops
