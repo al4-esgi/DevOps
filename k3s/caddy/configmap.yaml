@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: caddy-config
-  namespace: devops
+  namespace: infra
 data:
   Caddyfile: |
     :80 {
