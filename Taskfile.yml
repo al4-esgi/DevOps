@@ -1,12 +1,19 @@
 # https://taskfile.dev
 
-version: '3'
+version: "3"
 
 vars:
   GREETING: Hello, World!
 
 tasks:
   default:
+    desc: Print a greeting message
     cmds:
       - echo "{{.GREETING}}"
     silent: true
+  readme:
+    desc: Generate README.md
+    cmds:
+      - echo "# Taskfile Example" > README.md
+      - echo "This is an example of a Taskfile." >> README.md
+      - echo "It demonstrates how to define tasks and variables." >> README.md
