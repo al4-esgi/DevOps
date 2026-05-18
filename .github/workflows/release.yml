@@ -23,6 +23,6 @@ jobs:
           kubectl apply -f k3s/namespace.yaml
           kubectl apply -f k3s/caddy/namespace.yaml
           kubectl apply -R -f k3s/
-          kubectl rollout status deployment/postgres -n {{.NAMESPACE}}
-          kubectl rollout status deployment/n8n -n {{.NAMESPACE}}
-          kubectl rollout status deployment/dozzle -n {{.NAMESPACE}}
+          kubectl rollout status deployment/postgres -n $NAMESPACE
+          kubectl rollout status deployment/n8n -n  $NAMESPACE
+          kubectl rollout status deployment/dozzle -n $NAMESPACE
