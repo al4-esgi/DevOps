@@ -65,14 +65,6 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-      - name: Create GHCR image pull secret
-        run: |
-          kubectl create secret docker-registry ghcr-pull-secret \
-          --docker-server=ghcr.io \
-          --docker-username=${{ github.actor }} \
-          --docker-password=${{ secrets.GITHUB_TOKEN }} \
-          -n apps --dry-run=client -o yaml | kubectl apply -f -
-
       - name: Deploy
         env:
           NS_DEVOPS: devops
@@ -80,6 +72,13 @@ jobs:
           NS_APPS: apps
         run: |
           kubectl apply -f k3s/namespace.yaml
+          kubectl create secret docker-registry ghcr-pull-secret \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            -n apps --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply -f k3s/policies/templates/ -R
+          kubectl apply -f k3s/policies/constraints/ -R
           kubectl apply -R -f k3s/
           kubectl rollout status deployment/postgres      -n $NS_DEVOPS --timeout=120s
           kubectl rollout status deployment/n8n           -n $NS_DEVOPS --timeout=120s
