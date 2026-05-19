@@ -16,6 +16,8 @@ spec:
         app: api
     spec:
       restartPolicy: Always
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: api
           image: ghcr.io/al4-esgi/devops:latest

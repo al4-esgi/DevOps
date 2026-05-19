@@ -4,11 +4,8 @@ metadata:
   name: api
   namespace: apps
 spec:
-  containers:
-    - name: api
-      image: ghcr.io/al4-esgi/devops:latest
-  imagePullSecrets:
-    - name: ghcr-pull-secret
+  selector:
+    app: api
   ports:
     - port: 3002
       targetPort: 3000
