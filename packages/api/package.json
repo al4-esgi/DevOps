@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node --experimental-strip-types index.ts",
+    "dev": "node --experimental-strip-types --watch index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.0",
+    "@types/ws": "^8.18.1",
+    "lefthook": "^2.1.6"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.96.1",
+    "@effect/platform-node": "^0.106.0"
+  }
+}
