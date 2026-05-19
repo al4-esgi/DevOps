@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: devops
+  annotations:
+    prometheus_io_scrape: "true"
+    prometheus_io_port: "9090"
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+  type: ClusterIP

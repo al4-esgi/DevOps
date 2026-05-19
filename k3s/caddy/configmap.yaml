@@ -16,3 +16,11 @@ data:
     status.devops.vlxx.fr {
       reverse_proxy uptime-kuma.devops.svc.cluster.local:3001
     }
+
+    grafana.devops.vlxx.fr {
+      reverse_proxy grafana.devops.svc.cluster.local:3000
+    }
+
+    prometheus.devops.vlxx.fr {
+      reverse_proxy prometheus.devops.svc.cluster.local:9090
+    }
