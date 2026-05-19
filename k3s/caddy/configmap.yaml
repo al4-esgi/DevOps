@@ -12,3 +12,7 @@ data:
     dozzle.devops.vlxx.fr {
       reverse_proxy dozzle.devops.svc.cluster.local:8080
     }
+
+    status.devops.vlxx.fr {
+      reverse_proxy uptime-kuma.devops.svc.cluster.local:3001
+    }

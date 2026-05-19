@@ -16,6 +16,7 @@ spec:
         app: dozzle
     spec:
       serviceAccountName: dozzle-viewer
+      restartPolicy: Always
       containers:
         - name: dozzle
           image: amir20/dozzle:latest
@@ -31,6 +32,22 @@ spec:
             # Pour restreindre à un namespace :
             # - name: DOZZLE_NAMESPACE
             #   value: "devops"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
           volumeMounts:
             - name: dozzle-data
               mountPath: /data

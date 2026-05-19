@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: smoke-tests
+  namespace: devops
+spec:
+  # Toutes les 5 minutes
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      # Timeout du job : 2 minutes max
+      activeDeadlineSeconds: 120
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: smoke-test
+              image: curlimages/curl:8.6.0
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  FAILED=0
+
+                  check() {
+                    SERVICE=$1
+                    URL=$2
+                    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$URL" || echo "000")
+                    if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+                      echo "[OK]  $SERVICE → HTTP $HTTP_CODE"
+                    else
+                      echo "[FAIL] $SERVICE → HTTP $HTTP_CODE (url: $URL)"
+                      FAILED=1
+                    fi
+                  }
+
+                  echo "=== Smoke Tests $(date -u '+%Y-%m-%dT%H:%M:%SZ') ==="
+
+                  # Test n8n (health endpoint)
+                  check "n8n"          "http://n8n.devops.svc.cluster.local:5678/healthz"
+
+                  # Test Dozzle
+                  check "dozzle"       "http://dozzle.devops.svc.cluster.local:8080/"
+
+                  # Test Uptime Kuma
+                  check "uptime-kuma"  "http://uptime-kuma.devops.svc.cluster.local:3001/"
+
+                  # Test PostgreSQL via pg_isready (via env variables du secret)
+                  # Utilise netcat pour vérifier que le port est ouvert
+                  if nc -z -w5 postgres.devops.svc.cluster.local 5432; then
+                    echo "[OK]  postgres → port 5432 accessible"
+                  else
+                    echo "[FAIL] postgres → port 5432 inaccessible"
+                    FAILED=1
+                  fi
+
+                  echo "=== Fin des tests ==="
+
+                  if [ "$FAILED" -ne 0 ]; then
+                    echo "ERREUR: Un ou plusieurs services sont en échec !"
+                    exit 1
+                  fi
+
+                  echo "Tous les services sont opérationnels."
+                  exit 0
