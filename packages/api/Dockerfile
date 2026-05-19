@@ -9,4 +9,4 @@ COPY index.ts ./
 
 EXPOSE 3000
 
-CMD ["node", "--experimental-strip-types", "index.ts"]
+CMD ["node",  "index.ts"]
