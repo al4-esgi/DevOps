@@ -51,6 +51,7 @@ jobs:
           trivy-config: trivy.yaml
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
