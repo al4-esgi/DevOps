@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVOPS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Space Mono', monospace;
+      background: #fff;
+      color: #000;
+      border: 12px solid #000;
+      min-height: 100vh;
+    }
+
+    header {
+      border-bottom: 6px solid #000;
+      padding: 2rem;
+      background: #000;
+      color: #fff;
+    }
+
+    header h1 {
+      font-size: 5rem;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff0;
+    }
+
+    nav {
+      border-bottom: 4px solid #000;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      display: block;
+      padding: 1rem 2rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      color: #000;
+      border-right: 3px solid #000;
+      transition: background 0.05s;
+    }
+
+    nav a:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      border-bottom: 4px solid #000;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      border: 4px solid #000;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .card::before {
+      content: attr(data-number);
+      position: absolute;
+      top: -1.2rem;
+      left: -0.5rem;
+      background: #ff0;
+      border: 3px solid #000;
+      padding: 0.2rem 0.8rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .card h3 {
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .card:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .principles {
+      border: 5px solid #000;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      background: #ff0;
+    }
+
+    .principles ol {
+      list-style: none;
+      counter-reset: principle;
+    }
+
+    .principles li {
+      counter-increment: principle;
+      font-size: 1.1rem;
+      padding: 0.7rem 0;
+      border-bottom: 2px solid #000;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .principles li:last-child {
+      border-bottom: none;
+    }
+
+    .principles li::before {
+      content: counter(principle, decimal-leading-zero) " — ";
+    }
+
+    .cycle {
+      border: 5px solid #000;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .cycle-items {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0;
+      margin-top: 1.5rem;
+    }
+
+    .cycle-item {
+      border: 3px solid #000;
+      padding: 1rem 1.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .cycle-item:not(:last-child) {
+      border-right: none;
+    }
+
+    .cycle-arrow {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 0 0.3rem;
+    }
+
+    .tools-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3rem;
+    }
+
+    .tools-table th,
+    .tools-table td {
+      border: 3px solid #000;
+      padding: 0.8rem 1.2rem;
+      text-align: left;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .tools-table th {
+      background: #000;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .tools-table tr:hover td {
+      background: #ff0;
+    }
+
+    .banner {
+      background: #000;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+      border: 5px solid #000;
+      margin-bottom: 3rem;
+    }
+
+    .banner h2 {
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .banner p {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #ff0;
+    }
+
+    footer {
+      border-top: 6px solid #000;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      background: #000;
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 2.5rem; }
+      .section-title { font-size: 1.5rem; }
+      nav a { padding: 0.8rem 1rem; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>DevOps</h1>
+    <p>Ship fast. Break nothing. Iterate forever.</p>
+  </header>
+
+  <nav>
+    <a href="#pillars">Pillars</a>
+    <a href="#principles">Principles</a>
+    <a href="#cycle">Cycle</a>
+    <a href="#tools">Tools</a>
+  </nav>
+
+  <main>
+
+    <div class="banner">
+      <h2>Development + Operations = DevOps</h2>
+      <p>A culture. A practice. A way of building software that doesn't suck.</p>
+    </div>
+
+    <section id="pillars">
+      <h2 class="section-title">The Four Pillars</h2>
+      <div class="grid">
+        <div class="card" data-number="01">
+          <h3>Culture</h3>
+          <p>Shared responsibility. No more throwing code over the wall. Dev and Ops own the outcome together. Blameless post-mortems. Trust over silos.</p>
+        </div>
+        <div class="card" data-number="02">
+          <h3>Automation</h3>
+          <p>If you do it twice, script it. CI/CD pipelines, infrastructure as code, automated testing. Humans think. Machines execute.</p>
+        </div>
+        <div class="card" data-number="03">
+          <h3>Measurement</h3>
+          <p>What gets measured gets improved. MTTR, deployment frequency, lead time, change failure rate. Data over opinions.</p>
+        </div>
+        <div class="card" data-number="04">
+          <h3>Sharing</h3>
+          <p>Open feedback loops. Shared runbooks. Transparent dashboards. Knowledge is only powerful when it's distributed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="principles">
+      <h2 class="section-title">Principles</h2>
+      <div class="principles">
+        <ol>
+          <li>Flow left — shift security, testing, and reviews earlier</li>
+          <li>Small batches — deploy tiny changes, reduce risk</li>
+          <li>Feedback loops — monitor, alert, learn, repeat</li>
+          <li>Infrastructure as code — everything versioned, reproducible</li>
+          <li>Continuous improvement — kaizen over revolution</li>
+          <li>Resilience by design — embrace failure, build redundancy</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="cycle">
+      <h2 class="section-title">The Infinite Loop</h2>
+      <div class="cycle">
+        <div class="cycle-items">
+          <div class="cycle-item">Plan</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Code</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Build</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Test</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Release</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Deploy</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Operate</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Monitor</div><div class="cycle-arrow">→</div>
+          <div class="cycle-item">Plan</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tools">
+      <h2 class="section-title">The Toolbox</h2>
+      <table class="tools-table">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Category</th>
+            <th>Tools</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Version Control</td>
+            <td>Source</td>
+            <td>Git · GitHub · GitLab · Bitbucket</td>
+          </tr>
+          <tr>
+            <td>CI/CD</td>
+            <td>Pipeline</td>
+            <td>Jenkins · GitHub Actions · GitLab CI · CircleCI</td>
+          </tr>
+          <tr>
+            <td>Containers</td>
+            <td>Runtime</td>
+            <td>Docker · Podman · containerd</td>
+          </tr>
+          <tr>
+            <td>Orchestration</td>
+            <td>Platform</td>
+            <td>Kubernetes · Nomad · Docker Swarm</td>
+          </tr>
+          <tr>
+            <td>IaC</td>
+            <td>Infrastructure</td>
+            <td>Terraform · Pulumi · Ansible · CloudFormation</td>
+          </tr>
+          <tr>
+            <td>Monitoring</td>
+            <td>Observability</td>
+            <td>Prometheus · Grafana · Datadog · ELK</td>
+          </tr>
+          <tr>
+            <td>Security</td>
+            <td>DevSecOps</td>
+            <td>Snyk · Trivy · Vault · OWASP ZAP</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>DevOps — 2026 — Build · Ship · Run · Learn</p>
+  </footer>
+
+</body>
+</html>
