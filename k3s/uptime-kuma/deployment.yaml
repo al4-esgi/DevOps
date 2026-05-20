@@ -16,9 +16,23 @@ spec:
         app: uptime-kuma
     spec:
       restartPolicy: Always
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
       containers:
         - name: uptime-kuma
           image: louislam/uptime-kuma:1
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
           ports:
             - containerPort: 3001
           volumeMounts:

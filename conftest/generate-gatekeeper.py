@@ -45,7 +45,7 @@ def transform_rego(source: str) -> str:
     lines = []
     for line in source.splitlines():
         # Skip metadata comments
-        if line.startswith("# gatekeeper-kind:") or line.startswith("# gatekeeper-name:"):
+        if line.startswith("# gatekeeper-kind:") or line.startswith("# gatekeeper-name:") or line.startswith("# gatekeeper-exclude:"):
             continue
         lines.append(line)
 
@@ -56,6 +56,9 @@ def transform_rego(source: str) -> str:
 
     # Transform: deny contains msg if { ... } → violation[{"msg": msg}] { ... }
     rego = re.sub(r"deny contains msg if \{", 'violation[{"msg": msg}] {', rego)
+
+    # Transform: input.metadata → input.review.object.metadata (for namespace checks)
+    rego = rego.replace("input.metadata.namespace", "input.review.object.metadata.namespace")
 
     # Transform: input.spec.* → input.review.object.spec.*
     rego = rego.replace("input.spec.", "input.review.object.spec.")
@@ -97,9 +100,15 @@ spec:
 """
 
 
-def generate_constraint_yaml(kind: str, name: str) -> str:
+def generate_constraint_yaml(kind: str, name: str, extra_excludes: list[str] | None = None) -> str:
     """Generate a Gatekeeper Constraint CRD as YAML string."""
     constraint_name = kind_to_kebab(kind)
+
+    excludes = list(EXCLUDED_NAMESPACES)
+    if extra_excludes:
+        excludes.extend(extra_excludes)
+
+    excluded_yaml = "\n".join(f"      - {ns}" for ns in excludes)
 
     return f"""\
 apiVersion: constraints.gatekeeper.sh/v1beta1
@@ -114,8 +123,7 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
     excludedNamespaces:
-      - kube-system
-      - gatekeeper-system
+{excluded_yaml}
 """
 
 
@@ -143,6 +151,12 @@ def main():
             print(f"SKIP: {rego_file.name} (no gatekeeper-kind/name headers — likely a library)")
             continue
 
+        # Extract extra excluded namespaces
+        exclude_match = re.findall(r"^# gatekeeper-exclude:\s*(.+)$", source, re.MULTILINE)
+        extra_excludes = []
+        for exc in exclude_match:
+            extra_excludes.extend(ns.strip() for ns in exc.split(","))
+
         kind = kind_match.group(1).strip()
         name = name_match.group(1).strip()
         basename = rego_file.stem  # e.g. no_run_as_root
@@ -158,7 +172,7 @@ def main():
         print(f"  Template:  {template_path.relative_to(REPO_ROOT)}")
 
         # --- Generate Constraint ---
-        constraint_yaml = generate_constraint_yaml(kind, name)
+        constraint_yaml = generate_constraint_yaml(kind, name, extra_excludes=extra_excludes if extra_excludes else None)
         constraint_path = CONSTRAINTS_DIR / f"{basename.replace('_', '-')}.yaml"
         constraint_path.write_text(constraint_yaml)
         constraints_generated += 1

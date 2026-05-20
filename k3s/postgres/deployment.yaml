@@ -14,11 +14,26 @@ spec:
         app: postgres
     spec:
       restartPolicy: Always
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 999
       containers:
         - name: postgres
           image: postgres:16-alpine
           ports:
             - containerPort: 5432
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
           envFrom:
             - secretRef:
                 name: postgres-secret

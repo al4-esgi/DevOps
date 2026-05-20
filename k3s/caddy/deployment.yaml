@@ -17,10 +17,18 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
       restartPolicy: Always
       containers:
         - name: caddy
           image: caddy:alpine
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 80
             - containerPort: 443
