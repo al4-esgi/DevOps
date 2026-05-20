@@ -77,8 +77,8 @@ jobs:
             --docker-username=${{ github.actor }} \
             --docker-password=${{ secrets.GITHUB_TOKEN }} \
             -n apps --dry-run=client -o yaml | kubectl apply -f -
-          # kubectl apply -f k3s/policies/templates/ -R
-          # kubectl apply -f k3s/policies/constraints/ -R
+          kubectl apply -f k3s/policies/templates/ -R
+          kubectl apply -f k3s/policies/constraints/ -R
           kubectl apply -R -f k3s/
           kubectl rollout status deployment/postgres      -n $NS_DEVOPS --timeout=120s
           kubectl rollout status deployment/n8n           -n $NS_DEVOPS --timeout=120s
