@@ -5,6 +5,8 @@ metadata:
   namespace: devops
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: n8n
@@ -66,6 +68,8 @@ spec:
               value: "n8n.co.vlxx.fr"
             - name: WEBHOOK_URL
               value: "https://n8n.co.vlxx.fr/"
+            - name: N8N_PORT
+              value: "5678"
             - name: N8N_SECURE_COOKIE
               value: "true"
           livenessProbe:
