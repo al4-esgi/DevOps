@@ -5,22 +5,22 @@ metadata:
   namespace: infra
 data:
   Caddyfile: |
-    n8n.devops.vlxx.fr {
+    n8n.devops.futurpanda.dev {
       reverse_proxy n8n.devops.svc.cluster.local:5678
     }
 
-    dozzle.devops.vlxx.fr {
+    dozzle.devops.futurpanda.dev {
       reverse_proxy dozzle.devops.svc.cluster.local:8080
     }
 
-    status.devops.vlxx.fr {
+    status.devops.futurpanda.dev {
       reverse_proxy uptime-kuma.devops.svc.cluster.local:3001
     }
 
-    grafana.devops.vlxx.fr {
+    grafana.devops.futurpanda.dev {
       reverse_proxy grafana.devops.svc.cluster.local:3000
     }
 
-    prometheus.devops.vlxx.fr {
+    prometheus.devops.futurpanda.dev {
       reverse_proxy prometheus.devops.svc.cluster.local:9090
     }
