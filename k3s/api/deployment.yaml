@@ -20,7 +20,7 @@ spec:
         - name: ghcr-pull-secret
       containers:
         - name: api
-          image: ghcr.io/al4-esgi/devops:latest
+          image: ghcr.io/al4-esgi/devops:sha-5769672
           ports:
             - containerPort: 3000
           livenessProbe:
