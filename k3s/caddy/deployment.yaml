@@ -22,22 +22,22 @@ spec:
           ports:
             - containerPort: 80
             - containerPort: 443
-          livenessProbe:
-            httpGet:
-              path: /config/
-              port: 2019
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /config/
-              port: 2019
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+          # livenessProbe:
+          #   httpGet:
+          #     path: /config/
+          #     port: 2019
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 30
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
+          # readinessProbe:
+          #   httpGet:
+          #     path: /config/
+          #     port: 2019
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
           resources:
             limits:
               cpu: "500m"
