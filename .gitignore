@@ -1,0 +1,3 @@
+.task/
+k3s/policies/templates/
+k3s/policies/constraints/

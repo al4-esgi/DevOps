@@ -1,0 +1,26 @@
+name: Conftest Policy Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+
+jobs:
+  conftest:
+    if: "!startsWith(github.event.pull_request.title, 'WIP')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install conftest
+        uses: instrumentisto/conftest-action@v1
+
+      - name: Run conftest against k3s manifests
+        run: |
+          conftest test -p conftest/policies \
+            $(find k3s -name '*.yaml' -not -path '*/policies/*') \
+            --no-color
+
+      - name: Verify Gatekeeper generation works
+        run: python3 conftest/generate-gatekeeper.py

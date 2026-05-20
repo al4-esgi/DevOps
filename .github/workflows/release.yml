@@ -65,27 +65,11 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
 
+      - name: Install task
+        uses: arduino/setup-task@v2
+
       - name: Deploy
-        env:
-          NS_DEVOPS: devops
-          NS_INFRA: infra
-          NS_APPS: apps
-        run: |
-          kubectl apply -f k3s/namespace.yaml
-          kubectl create secret docker-registry ghcr-pull-secret \
-            --docker-server=ghcr.io \
-            --docker-username=${{ github.actor }} \
-            --docker-password=${{ secrets.GITHUB_TOKEN }} \
-            -n apps --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -f k3s/policies/templates/ -R
-          kubectl apply -f k3s/policies/constraints/ -R
-          kubectl apply -R -f k3s/
-          kubectl rollout status deployment/postgres      -n $NS_DEVOPS --timeout=120s
-          kubectl rollout status deployment/n8n           -n $NS_DEVOPS --timeout=120s
-          kubectl rollout status deployment/dozzle        -n $NS_DEVOPS --timeout=120s
-          kubectl rollout status deployment/uptime-kuma   -n $NS_DEVOPS --timeout=120s
-          kubectl rollout status deployment/caddy         -n $NS_INFRA  --timeout=120s
-          kubectl rollout status deployment/api         -n $NS_APPS  --timeout=120s
+        run: task deploy:ci GHCR_USER=${{ github.actor }} GHCR_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
   smoke-test:
     runs-on: ubuntu-latest
