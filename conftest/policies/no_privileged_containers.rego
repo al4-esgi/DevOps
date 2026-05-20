@@ -4,13 +4,13 @@ package main
 # gatekeeper-name: noprivilegedcontainers
 
 deny contains msg if {
-	container := input.spec.containers[_]
+	container := containers[_]
 	container.securityContext.privileged == true
 	msg := sprintf("Privileged containers are not allowed: %v", [container.name])
 }
 
 deny contains msg if {
-	container := input.spec.initContainers[_]
+	container := init_containers[_]
 	container.securityContext.privileged == true
 	msg := sprintf("Privileged init containers are not allowed: %v", [container.name])
 }

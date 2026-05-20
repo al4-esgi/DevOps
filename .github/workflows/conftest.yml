@@ -9,12 +9,14 @@ jobs:
   conftest:
     if: "!startsWith(github.event.pull_request.title, 'WIP')"
     runs-on: ubuntu-latest
+    container:
+      image: openpolicyagent/conftest:latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install conftest
-        uses: instrumentisto/conftest-action@v1
+      - name: Install dependencies
+        run: apk add --no-cache python3 findutils
 
       - name: Run conftest against k3s manifests
         run: |

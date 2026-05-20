@@ -4,7 +4,7 @@ package main
 # gatekeeper-name: noprivilegeescalation
 
 deny contains msg if {
-	container := input.spec.containers[_]
+	container := containers[_]
 	container.securityContext.allowPrivilegeEscalation == true
 	msg := sprintf("allowPrivilegeEscalation is not allowed: %v", [container.name])
 }

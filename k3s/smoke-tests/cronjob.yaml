@@ -16,9 +16,22 @@ spec:
       template:
         spec:
           restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
           containers:
             - name: smoke-test
               image: curlimages/curl:8.6.0
+              securityContext:
+                runAsNonRoot: true
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+              resources:
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+                requests:
+                  cpu: "50m"
+                  memory: "32Mi"
               command:
                 - /bin/sh
                 - -c

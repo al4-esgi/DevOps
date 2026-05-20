@@ -14,16 +14,40 @@ spec:
         app: n8n
     spec:
       restartPolicy: Always
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
       initContainers:
         - name: wait-for-postgres
           image: busybox:1.36
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "64Mi"
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
           command:
             - sh
             - -c
             - until nc -z postgres.devops.svc.cluster.local 5432; do echo "waiting for postgres..."; sleep 2; done
       containers:
         - name: n8n
-          image: n8nio/n8n:latest
+          image: n8nio/n8n:1.38.0
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
           ports:
             - containerPort: 5678
           env:
