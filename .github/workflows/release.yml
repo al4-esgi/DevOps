@@ -48,7 +48,7 @@ jobs:
         with:
           scan-type: "fs"
           scan-ref: "."
-          trivy-config: trivy.yaml
+          trivy-config: trivy.yml
 
   deploy:
     needs: build
