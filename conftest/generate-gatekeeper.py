@@ -8,9 +8,15 @@ Each .rego file must have these header comments:
     # gatekeeper-kind: <CamelCaseKind>
     # gatekeeper-name: <lowercasename>
 
+Files without these headers (like lib.rego) are skipped.
+
 Transformations applied to Rego:
     - deny contains msg if { ... }  →  violation[{"msg": msg}] { ... }
     - input.spec.*                  →  input.review.object.spec.*
+    - containers[_]                 →  input.review.object.spec.template.spec.containers[_]
+    - init_containers[_]            →  input.review.object.spec.template.spec.initContainers[_]
+    - volumes[_]                    →  input.review.object.spec.template.spec.volumes[_]
+    - pod_spec[_]                   →  input.review.object.spec.template.spec
 
 Outputs:
     - k3s/policies/templates/<name>.yaml   (ConstraintTemplate CRDs)
@@ -54,6 +60,12 @@ def transform_rego(source: str) -> str:
     # Transform: input.spec.* → input.review.object.spec.*
     rego = rego.replace("input.spec.", "input.review.object.spec.")
 
+    # Transform: conftest helpers → Gatekeeper paths
+    rego = re.sub(r'\bcontainers\[_\]', 'input.review.object.spec.template.spec.containers[_]', rego)
+    rego = re.sub(r'\binit_containers\[_\]', 'input.review.object.spec.template.spec.initContainers[_]', rego)
+    rego = re.sub(r'\bvolumes\[_\]', 'input.review.object.spec.template.spec.volumes[_]', rego)
+    rego = re.sub(r'\bpod_spec\[_\]', 'input.review.object.spec.template.spec', rego)
+
     return rego
 
 
@@ -61,9 +73,6 @@ def kind_to_kebab(kind: str) -> str:
     """Convert CamelCase kind to kebab-case: NoRunAsRoot → no-run-as-root."""
     parts = re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z][a-z]|\b)", kind)
     return "-".join(p.lower() for p in parts)
-
-
-
 
 
 def generate_constraint_template_yAML(kind: str, name: str, rego_body: str) -> str:
@@ -131,8 +140,7 @@ def main():
         name_match = re.search(r"^# gatekeeper-name:\s*(.+)$", source, re.MULTILINE)
 
         if not kind_match or not name_match:
-            print(f"ERROR: {rego_file.name} missing gatekeeper-kind or gatekeeper-name header")
-            errors = True
+            print(f"SKIP: {rego_file.name} (no gatekeeper-kind/name headers — likely a library)")
             continue
 
         kind = kind_match.group(1).strip()
