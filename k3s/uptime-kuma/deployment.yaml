@@ -16,9 +16,6 @@ spec:
         app: uptime-kuma
     spec:
       restartPolicy: Always
-      securityContext:
-        runAsNonRoot: true
-        fsGroup: 1000
       containers:
         - name: uptime-kuma
           image: louislam/uptime-kuma:1

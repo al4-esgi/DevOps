@@ -17,9 +17,6 @@ spec:
     spec:
       serviceAccountName: dozzle-viewer
       restartPolicy: Always
-      securityContext:
-        runAsNonRoot: true
-        fsGroup: 1000
       containers:
         - name: dozzle
           image: amir20/dozzle:v8

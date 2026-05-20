@@ -18,9 +18,6 @@ spec:
       restartPolicy: Always
       imagePullSecrets:
         - name: ghcr-pull-secret
-      securityContext:
-        runAsNonRoot: true
-        fsGroup: 1000
       containers:
         - name: api
           image: ghcr.io/al4-esgi/devops:sha-5769672

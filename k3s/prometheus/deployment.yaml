@@ -16,9 +16,6 @@ spec:
         app: prometheus
     spec:
       serviceAccountName: prometheus
-      securityContext:
-        runAsNonRoot: true
-        fsGroup: 472
       containers:
         - name: prometheus
           image: prom/prometheus:v2.51.0
