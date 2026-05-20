@@ -5,7 +5,7 @@ metadata:
   namespace: infra
 data:
   Caddyfile: |
-    n8n.devops.futurpanda.dev {
+    n8n.notdevops.futurpanda.dev {
       reverse_proxy n8n.devops.svc.cluster.local:5678
     }
 
