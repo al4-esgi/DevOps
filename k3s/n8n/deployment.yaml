@@ -63,9 +63,9 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
             - name: N8N_HOST
-              value: "n8n.devops.vlxx.fr"
+              value: "n8n.co.vlxx.fr"
             - name: WEBHOOK_URL
-              value: "https://n8n.devops.vlxx.fr/"
+              value: "https://n8n.co.vlxx.fr/"
             - name: N8N_SECURE_COOKIE
               value: "true"
           livenessProbe:
