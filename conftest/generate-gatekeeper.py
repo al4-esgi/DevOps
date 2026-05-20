@@ -45,7 +45,7 @@ def transform_rego(source: str) -> str:
     lines = []
     for line in source.splitlines():
         # Skip metadata comments
-        if line.startswith("# gatekeeper-kind:") or line.startswith("# gatekeeper-name:") or line.startswith("# gatekeeper-exclude:"):
+        if line.startswith(("# gatekeeper-kind:", "# gatekeeper-name:", "# gatekeeper-exclude:", "# gatekeeper-enforcement:")):
             continue
         lines.append(line)
 
@@ -54,8 +54,8 @@ def transform_rego(source: str) -> str:
     # Remove package line
     rego = re.sub(r"^package\s+\S+\s*\n", "", rego, flags=re.MULTILINE)
 
-    # Transform: deny contains msg if { ... } → violation[{"msg": msg}] { ... }
-    rego = re.sub(r"deny contains msg if \{", 'violation[{"msg": msg}] {', rego)
+    # Transform: deny/warn contains msg if { ... } → violation[{"msg": msg}] { ... }
+    rego = re.sub(r"(?:deny|warn) contains msg if \{", 'violation[{"msg": msg}] {', rego)
 
     # Transform: input.metadata → input.review.object.metadata (for namespace checks)
     rego = rego.replace("input.metadata.namespace", "input.review.object.metadata.namespace")
@@ -100,7 +100,7 @@ spec:
 """
 
 
-def generate_constraint_yaml(kind: str, name: str, extra_excludes: list[str] | None = None) -> str:
+def generate_constraint_yaml(kind: str, name: str, extra_excludes: list[str] | None = None, enforcement: str = "deny") -> str:
     """Generate a Gatekeeper Constraint CRD as YAML string."""
     constraint_name = kind_to_kebab(kind)
 
@@ -110,12 +110,14 @@ def generate_constraint_yaml(kind: str, name: str, extra_excludes: list[str] | N
 
     excluded_yaml = "\n".join(f"      - {ns}" for ns in excludes)
 
+    enforcement_line = f"\n  enforcementAction: {enforcement}" if enforcement != "deny" else ""
+
     return f"""\
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: {kind}
 metadata:
   name: {constraint_name}
-spec:
+spec:{enforcement_line}
   match:
     kinds:
       - apiGroups: ["apps"]
@@ -157,6 +159,10 @@ def main():
         for exc in exclude_match:
             extra_excludes.extend(ns.strip() for ns in exc.split(","))
 
+        # Extract enforcement action (default: deny)
+        enforcement_match = re.search(r"^# gatekeeper-enforcement:\s*(.+)$", source, re.MULTILINE)
+        enforcement = enforcement_match.group(1).strip() if enforcement_match else "deny"
+
         kind = kind_match.group(1).strip()
         name = name_match.group(1).strip()
         basename = rego_file.stem  # e.g. no_run_as_root
@@ -172,7 +178,7 @@ def main():
         print(f"  Template:  {template_path.relative_to(REPO_ROOT)}")
 
         # --- Generate Constraint ---
-        constraint_yaml = generate_constraint_yaml(kind, name, extra_excludes=extra_excludes if extra_excludes else None)
+        constraint_yaml = generate_constraint_yaml(kind, name, extra_excludes=extra_excludes if extra_excludes else None, enforcement=enforcement)
         constraint_path = CONSTRAINTS_DIR / f"{basename.replace('_', '-')}.yaml"
         constraint_path.write_text(constraint_yaml)
         constraints_generated += 1

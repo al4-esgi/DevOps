@@ -7,6 +7,9 @@ RUN npm ci --omit=dev
 
 COPY index.ts ./
 
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+USER appuser
+
 EXPOSE 3000
 
-CMD ["node",  "index.ts"]
+CMD ["node", "index.ts"]
