@@ -1,0 +1,80 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  NAMESPACE: devops
+
+env:
+  KUBECONFIG: "{{.HOME}}/.kube/config-devops"
+
+tasks:
+  default:
+    desc: Affiche les tâches disponibles
+    cmds:
+      - task --list
+    silent: true
+
+  delete-all-pods:
+    desc: Supprime tous les pods du namespace devops pour démontrer l'auto-récupération
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - echo "Pods avant suppression:"
+      - kubectl get pods -n {{.NAMESPACE}}
+      - echo ""
+      - echo "Suppression de tous les pods..."
+      - kubectl delete pod -n {{.NAMESPACE}} --all
+      - echo ""
+      - echo "Attente du redémarrage des pods..."
+      - kubectl wait --for=condition=Ready pods --all -n {{.NAMESPACE}} --timeout=120s
+      - echo ""
+      - echo "Pods après redémarrage automatique:"
+      - kubectl get pods -n {{.NAMESPACE}}
+
+  delete-pod-dozzle:
+    desc: Supprime le pod dozzle
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl delete pod -n {{.NAMESPACE}} -l app=dozzle
+      - kubectl wait --for=condition=Ready pods -l app=dozzle -n {{.NAMESPACE}} --timeout=60s
+
+  delete-pod-grafana:
+    desc: Supprime le pod grafana
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl delete pod -n {{.NAMESPACE}} -l app.kubernetes.io/name=grafana
+      - kubectl wait --for=condition=Ready pods -l app.kubernetes.io/name=grafana -n {{.NAMESPACE}} --timeout=60s
+
+  delete-pod-n8n:
+    desc: Supprime le pod n8n
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl delete pod -n {{.NAMESPACE}} -l app=n8n
+      - kubectl wait --for=condition=Ready pods -l app=n8n -n {{.NAMESPACE}} --timeout=60s
+
+  delete-pod-postgres:
+    desc: Supprime le pod postgres
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl delete pod -n {{.NAMESPACE}} -l app=postgres
+      - kubectl wait --for=condition=Ready pods -l app=postgres -n {{.NAMESPACE}} --timeout=60s
+
+  delete-pod-prometheus:
+    desc: Supprime le pod prometheus
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl delete pod -n {{.NAMESPACE}} -l app=prometheus
+      - kubectl wait --for=condition=Ready pods -l app=prometheus -n {{.NAMESPACE}} --timeout=60s
+
+  delete-pod-uptime-kuma:
+    desc: Supprime le pod uptime-kuma
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl delete pod -n {{.NAMESPACE}} -l app=uptime-kuma
+      - kubectl wait --for=condition=Ready pods -l app=uptime-kuma -n {{.NAMESPACE}} --timeout=60s
+
+  watch:
+    desc: Surveille en temps réel les pods du namespace devops
+    cmds:
+      - export KUBECONFIG=~/.kube/config-devops
+      - kubectl get pods -n {{.NAMESPACE}} --watch
