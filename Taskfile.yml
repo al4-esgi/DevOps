@@ -81,11 +81,7 @@ tasks:
       - kubectl rollout status deployment/uptime-kuma -n {{.NAMESPACE}} --timeout=120s
       - kubectl rollout status deployment/caddy -n infra --timeout=120s
       - kubectl rollout status deployment/api -n apps --timeout=120s
-    vars:
-      GHCR_USER:
-        required: true
-      GHCR_TOKEN:
-        required: true
+
 
   restart:pods:
     desc: Redémarre tous les pods du namespace devops
