@@ -5,12 +5,23 @@ metadata:
   namespace: infra
 data:
   Caddyfile: |
-    *.devops.futurpanda.dev {
-      tls {
-        dns vercel
-    }
-
-    @n8n host n8n.devops.futurpanda.dev 
-    handle @n8n {
+    n8n.devops.futurpanda.dev {
       reverse_proxy n8n.devops.svc.cluster.local:5678
     }
+
+    dozzle.devops.futurpanda.dev {
+      reverse_proxy dozzle.devops.svc.cluster.local:8080
+    }
+
+    status.devops.futurpanda.dev {
+      reverse_proxy uptime-kuma.devops.svc.cluster.local:3001
+    }
+
+    grafana.devops.futurpanda.dev {
+      reverse_proxy grafana.devops.svc.cluster.local:3000
+    }
+
+    # prometheus. udevops.vlxx.fr {
+    #   reverse_proxy prometheus.devops.svc.cluster.local:9090
+    # }
+    #
