@@ -24,28 +24,28 @@ spec:
           ports:
             - containerPort: 80
             - containerPort: 443
-          livenessProbe:
-            exec:
-              command:
-                - wget
-                - -q
-                - --spider
-                - http://localhost:2019/config/
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 3
-          readinessProbe:
-            exec:
-              command:
-                - wget
-                - -q
-                - --spider
-                - http://localhost:2019/config/
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - wget
+          #       - -q
+          #       - --spider
+          #       - http://localhost:2019/config/
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 30
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
+          # readinessProbe:
+          #   exec:
+          #     command:
+          #       - wget
+          #       - -q
+          #       - --spider
+          #       - http://localhost:2019/config/
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
           resources:
             limits:
               cpu: "500m"
