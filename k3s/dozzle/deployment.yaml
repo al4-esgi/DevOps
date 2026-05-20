@@ -20,10 +20,6 @@ spec:
       containers:
         - name: dozzle
           image: amir20/dozzle:v8
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           resources:
             limits:
               cpu: "200m"

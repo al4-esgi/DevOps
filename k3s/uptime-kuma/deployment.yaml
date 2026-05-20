@@ -19,10 +19,6 @@ spec:
       containers:
         - name: uptime-kuma
           image: louislam/uptime-kuma:1
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
           resources:
             limits:
               cpu: "500m"

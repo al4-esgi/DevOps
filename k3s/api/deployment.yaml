@@ -21,10 +21,6 @@ spec:
       containers:
         - name: api
           image: ghcr.io/al4-esgi/devops:sha-5769672
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           resources:
             limits:
               cpu: "500m"

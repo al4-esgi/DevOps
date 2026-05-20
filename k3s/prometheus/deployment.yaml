@@ -19,11 +19,6 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus:v2.51.0
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 65534
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           resources:
             limits:
               cpu: "500m"
