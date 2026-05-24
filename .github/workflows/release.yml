@@ -3,9 +3,6 @@ name: Deploy to k3S server
 on:
   push:
     branches: [main]
-  schedule:
-    # Smoke test programmé toutes les heures via GitHub Actions
-    - cron: "0 * * * *"
 
 jobs:
   build:
