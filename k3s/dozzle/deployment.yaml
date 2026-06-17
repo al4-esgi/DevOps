@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: dozzle
-          image: amir20/dozzle:v8
+          image: amir20/dozzle:latest
           resources:
             limits:
               cpu: "200m"
